@@ -5,5 +5,5 @@ func Repeat(character string) string {
 	for i := 0; i < 5; i++ {
 		repeated += character
 	}
-	return ""
+	return repeated
 }
