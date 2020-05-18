@@ -28,3 +28,11 @@ func TestHello(t *testing.T) {
 	})
 
 }
+
+/*
+1. test 작성
+2. 컴파일 확인
+3. test 실행 및 오류 메세지 확인
+4. test 통과를 위해 코드 작성
+5. 리팩토링
+*/
