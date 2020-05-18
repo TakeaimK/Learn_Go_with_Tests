@@ -8,7 +8,7 @@ const greeting = "Hello, "
 
 func Hello(name string) string {
 	if name == "" {
-		return greeting + "world"
+		name = "world"
 	}
 	return greeting + name
 }
