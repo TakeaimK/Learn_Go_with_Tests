@@ -7,8 +7,15 @@ var (
 	ErrWordExists = errors.New("cannot add word because it already exists")
 )
 
+type DictionaryErr string
+
+func (e DictionaryErr) Error() string {
+	return string(e)
+}
+
 type dict interface {
 	Search() (string, error)
+	Add() error
 }
 
 type Dictionary map[string]string
@@ -32,4 +39,8 @@ func (d Dictionary) Add(word, def string) error {
 		return err
 	}
 	return nil
+}
+
+func (d Dictionary) Update(word, definition string) {
+	d[word] = definition
 }
