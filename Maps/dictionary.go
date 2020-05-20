@@ -2,7 +2,10 @@ package main
 
 import "errors"
 
-var ErrNotFound = errors.New("could not find the word you were looking for")
+var (
+	ErrNotFound   = errors.New("could not find the word you were looking for")
+	ErrWordExists = errors.New("cannot add word because it already exists")
+)
 
 type dict interface {
 	Search() (string, error)
@@ -18,6 +21,15 @@ func (d Dictionary) Search(word string) (string, error) {
 	return def, nil
 }
 
-func (d Dictionary) Add(word, def string) {
-	d[word] = def
+func (d Dictionary) Add(word, def string) error {
+	_, err := d.Search(word)
+	switch err {
+	case ErrNotFound:
+		d[word] = def
+	case nil:
+		return ErrWordExists
+	default:
+		return err
+	}
+	return nil
 }
