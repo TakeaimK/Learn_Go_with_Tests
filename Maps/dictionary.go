@@ -18,6 +18,7 @@ type dict interface {
 	Search() (string, error)
 	Add() error
 	Update() error
+	Delete()
 }
 
 type Dictionary map[string]string
@@ -56,4 +57,8 @@ func (d Dictionary) Update(word, def string) error {
 		return err
 	}
 	return nil
+}
+
+func (d Dictionary) Delete(word string) {
+	delete(d, word)
 }
