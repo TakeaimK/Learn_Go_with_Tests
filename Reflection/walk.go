@@ -1,6 +1,9 @@
 package reflection
 
-import "reflect"
+import (
+	"reflect"
+	"testing"
+)
 
 func walk(x interface{}, fn func(input string)) {
 	val := getValue(x)
@@ -40,4 +43,17 @@ func getValue(x interface{}) reflect.Value {
 	}
 
 	return val
+}
+
+func assertContains(t *testing.T, haystack []string, needle string) {
+	t.Helper()
+	contains := false
+	for _, x := range haystack {
+		if x == needle {
+			contains = true
+		}
+	}
+	if !contains {
+		t.Errorf("expected %+v to contain %q but it didn't", haystack, needle)
+	}
 }
