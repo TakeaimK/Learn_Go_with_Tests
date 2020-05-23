@@ -8,6 +8,14 @@ type RomanNumeral struct {
 }
 
 var allRomanNumerals = []RomanNumeral{
+	{1000, "M"},
+	{900, "CM"},
+	{500, "D"},
+	{400, "CD"},
+	{100, "C"},
+	{90, "XC"},
+	{50, "L"},
+	{40, "XL"},
 	{10, "X"},
 	{9, "IX"},
 	{5, "V"},
@@ -27,4 +35,8 @@ func ConvertToRoman(arabic int) string {
 	}
 
 	return result.String()
+}
+
+func ConvertToArabic(roman string) int {
+	return 1
 }
