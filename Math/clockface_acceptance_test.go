@@ -110,10 +110,10 @@ func TestSVGWriterHourHand(t *testing.T) {
 		time time.Time
 		line Line
 	}{
-		{
-			simpleTime(6, 0, 0),
-			Line{150, 150, 150, 200},
-		},
+		// {
+		// 	simpleTime(6, 0, 0),
+		// 	Line{150, 150, 150, 200},
+		// },
 	}
 
 	for _, c := range cases {
