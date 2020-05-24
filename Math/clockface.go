@@ -34,3 +34,7 @@ func angleToPoint(angle float64) Point {
 
 	return Point{x, y}
 }
+
+func hoursInRadians(t time.Time) float64 {
+	return math.Pi
+}
