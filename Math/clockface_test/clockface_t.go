@@ -1,4 +1,4 @@
-package clockface
+package clockface_test
 
 import "time"
 

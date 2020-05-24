@@ -1,4 +1,4 @@
-package clockface_test
+package clockface_test_test
 
 import (
 	"github.com/gypsydave5/learn-go-with-tests/math/v1/clockface"
