@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 type Handler interface {
@@ -10,5 +11,18 @@ type Handler interface {
 }
 
 func PlayerServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "20")
+
+	// TrimPrefix returns s without the provided leading prefix string.
+	// If s doesn't start with prefix, s is returned unchanged.
+	player := strings.TrimPrefix(r.URL.Path, "/players/")
+
+	if player == "Pepper" {
+		fmt.Fprint(w, "20")
+		return
+	}
+
+	if player == "Floyd" {
+		fmt.Fprint(w, "10")
+		return
+	}
 }
