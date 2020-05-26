@@ -8,11 +8,24 @@ import (
 	"net/http"
 )
 
+type ReadSeeker interface {
+	Reader
+	Seeker
+}
+
+type Reader interface {
+	Read(p []byte) (n int, err error)
+}
+
+type Seeker interface {
+	Seek(offset int64, whence int) (int64, error)
+}
+
 // PlayerStore stores score information about players
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() []Player
+	GetLeague() League
 }
 
 // Player stores a name with a number of wins
@@ -21,20 +34,12 @@ type Player struct {
 	Wins int
 }
 
+type League []Player
+
 // PlayerServer is a HTTP interface for player information
 type PlayerServer struct {
 	store PlayerStore
 	http.Handler
-}
-
-type FileSystemPlayerStore struct {
-	database io.Reader
-}
-
-func (f *FileSystemPlayerStore) GetLeague() []Player {
-	var league []Player
-	json.NewDecoder(f.database).Decode(&league)
-	return league
 }
 
 const jsonContentType = "application/json"
@@ -83,4 +88,58 @@ func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 	p.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func NewLeague(rdr io.Reader) (League, error) {
+	var league League
+	err := json.NewDecoder(rdr).Decode(&league)
+	if err != nil {
+		err = fmt.Errorf("problem parsing league, %v", err)
+	}
+
+	return league, err
+}
+
+type FileSystemPlayerStore struct {
+	database io.ReadWriteSeeker
+}
+
+func (f *FileSystemPlayerStore) GetLeague() League {
+	f.database.Seek(0, 0)
+	league, _ := NewLeague(f.database)
+	return league
+}
+
+func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
+
+	player := f.GetLeague().Find(name)
+
+	if player != nil {
+		return player.Wins
+	}
+
+	return 0
+}
+
+func (f *FileSystemPlayerStore) RecordWin(name string) {
+	league := f.GetLeague()
+	player := league.Find(name)
+
+	if player != nil {
+		player.Wins++
+	} else {
+		league = append(league, Player{name, 1})
+	}
+
+	f.database.Seek(0, 0)
+	json.NewEncoder(f.database).Encode(league)
+}
+
+func (l League) Find(name string) *Player {
+	for i, p := range l {
+		if p.Name == name {
+			return &l[i]
+		}
+	}
+	return nil
 }
