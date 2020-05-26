@@ -4,6 +4,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -24,6 +25,16 @@ type Player struct {
 type PlayerServer struct {
 	store PlayerStore
 	http.Handler
+}
+
+type FileSystemPlayerStore struct {
+	database io.Reader
+}
+
+func (f *FileSystemPlayerStore) GetLeague() []Player {
+	var league []Player
+	json.NewDecoder(f.database).Decode(&league)
+	return league
 }
 
 const jsonContentType = "application/json"

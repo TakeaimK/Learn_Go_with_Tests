@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -83,56 +84,22 @@ func assertContentType(t *testing.T, response *httptest.ResponseRecorder, want s
 	}
 }
 
-func TestLeague(t *testing.T) {
+func TestFileSystemStore(t *testing.T) {
 
-	t.Run("it returns the league table as JSON", func(t *testing.T) {
-		wantedLeague := []Player{
-			{"Cleo", 32},
-			{"Chris", 20},
-			{"Tiest", 14},
-		}
+	t.Run("/league from a reader", func(t *testing.T) {
+		database := strings.NewReader(`[
+            {"Name": "Cleo", "Wins": 10},
+            {"Name": "Chris", "Wins": 33}]`)
 
-		store := StubPlayerStore{nil, nil, wantedLeague}
-		server := NewPlayerServer(&store)
+		store := FileSystemPlayerStore{database}
 
-		request := newLeagueRequest()
-		response := httptest.NewRecorder()
+		got := store.GetLeague()
 
-		server.ServeHTTP(response, request)
-
-		got := getLeagueFromResponse(t, response.Body)
-		assertStatus(t, response.Code, http.StatusOK)
-		assertLeague(t, got, wantedLeague)
-		assertContentType(t, response, jsonContentType)
-	})
-}
-
-func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	store := NewInMemoryPlayerStore()
-	server := NewPlayerServer(store)
-	player := "Pepper"
-
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-
-	t.Run("get score", func(t *testing.T) {
-		response := httptest.NewRecorder()
-		server.ServeHTTP(response, newGetScoreRequest(player))
-		assertStatus(t, response.Code, http.StatusOK)
-
-		assertResponseBody(t, response.Body.String(), "3")
-	})
-
-	t.Run("get league", func(t *testing.T) {
-		response := httptest.NewRecorder()
-		server.ServeHTTP(response, newLeagueRequest())
-		assertStatus(t, response.Code, http.StatusOK)
-
-		got := getLeagueFromResponse(t, response.Body)
 		want := []Player{
-			{"Pepper", 3},
+			{"Cleo", 10},
+			{"Chris", 33},
 		}
+
 		assertLeague(t, got, want)
 	})
 }
