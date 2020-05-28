@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/quii/learn-go-with-tests/command-line/v3"
 	"log"
 	"os"
+
+	poker "github.com/quii/learn-go-with-tests/time/v3"
 )
 
 const dbFileName = "game.db.json"
@@ -17,7 +18,10 @@ func main() {
 	}
 	defer close()
 
+	game := poker.NewTexasHoldem(poker.BlindAlerterFunc(poker.StdOutAlerter), store)
+	cli := poker.NewCLI(os.Stdin, os.Stdout, game)
+
 	fmt.Println("Let's play poker")
 	fmt.Println("Type {Name} wins to record a win")
-	poker.NewCLI(store, os.Stdin).PlayPoker()
+	cli.PlayPoker()
 }
