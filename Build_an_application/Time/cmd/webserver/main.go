@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/quii/learn-go-with-tests/command-line/v3"
 	"log"
 	"net/http"
 	"os"
+	"pokers"
 )
 
-const dbFileName = "game.db.json"
+const dbFileName = "../cli/game.db.json"
 
 func main() {
 	db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)

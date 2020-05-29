@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	poker "github.com/quii/learn-go-with-tests/time/v3"
+	"pokers"
 )
 
-const dbFileName = "game.db.json"
+const dbFileName = "../game.db.json"
 
 func main() {
 	store, close, err := poker.FileSystemPlayerStoreFromFile(dbFileName)
